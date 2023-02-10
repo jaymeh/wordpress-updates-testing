@@ -1,6 +1,8 @@
 name: Security Check
 
 on:
+  workflow_dispatch:
+
   push:
     branches: [ "main" ]
   pull_request:
@@ -28,8 +30,8 @@ jobs:
     steps:
     - name: Set up MySQL
       run: |
-        systemctl start mysql
-        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+        sudo systemctl start mysql
+        sudo mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
