@@ -51,10 +51,11 @@ jobs:
     - name: Setup site
       run: php wp-cli.phar core install --url=${{ env.WP_SITE_URL}} --title="${{env.WP_SITE_TITLE}}" --admin_user=${{ env.WP_ADMIN_USERNAME }} --admin_email=${{ env.WP_ADMIN_EMAIL }}
 
-    - name: Set Git user
+    - name: Run plugin updates
       run: |
         git config --global user.email "dev@creode.co.uk"
         git config --global user.name "Creode Developers"
+        ./.github/scripts/update.sh
 
-    - name: Run plugin updates
-      run: ./.github/scripts/update.sh
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
