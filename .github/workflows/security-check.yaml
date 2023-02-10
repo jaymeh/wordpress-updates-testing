@@ -52,10 +52,4 @@ jobs:
       run: php wp-cli.phar core install --url=${{ env.WP_SITE_URL}} --title="${{env.WP_SITE_TITLE}}" --admin_user=${{ env.WP_ADMIN_USERNAME }} --admin_email=${{ env.WP_ADMIN_EMAIL }}
 
     - name: Run plugin updates
-      run: php wp-cli.phar plugin update --all
-
-    - name: jQ check
-      run: which jq
-
-    - name: Git Status
-      run: git status
+      run: ./.github/scripts/update.sh
