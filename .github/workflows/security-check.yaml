@@ -1,0 +1,53 @@
+name: Security Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DB_DATABASE: wordpress
+      DB_USER: root
+      DB_PASSWORD: root
+
+      WP_SITE_URL: wordpress-github-actions-testing.ddev.site
+      WP_SITE_TITLE: "Devops Site"
+      WP_ADMIN_USERNAME: admin
+      WP_ADMIN_EMAIL: admin@example.com
+
+    steps:
+    - name: Set up MySQL
+      run: |
+        systemctl start mysql
+        mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.0
+      env:
+        update: true
+
+    - uses: actions/checkout@v3
+
+    - name: Install WP CLI
+      run: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+    - name: Setup site
+      run: php wp-cli.phar core install --url="${{ env.WP_SITE_URL}} --title="${{env.SITE_TITLE}}" --admin_user=${{ env.WP_ADMIN_USERNAME }} --admin_email=${{ env.WP_ADMIN_EMAIL }}
+
+    - name: Run plugin updates
+      run: php wp-cli.phar plugin update --all
+
+    - name: Git Status
+      run: git status
