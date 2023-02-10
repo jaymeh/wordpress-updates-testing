@@ -46,7 +46,7 @@ jobs:
       run: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
 
     - name: Setup WP Config FIle
-      run: php wp-cli.phar config create --dbname=${{env.DB_DATABASE}} --dbuser=${{env.DB_USER}} --dbpassword=${{env.DB_PASSWORD}}
+      run: php wp-cli.phar config create --dbname=${{env.DB_DATABASE}} --dbuser=${{env.DB_USER}} --dbpass=${{env.DB_PASSWORD}}
 
     - name: Setup site
       run: php wp-cli.phar core install --url=${{ env.WP_SITE_URL}} --title="${{env.WP_SITE_TITLE}}" --admin_user=${{ env.WP_ADMIN_USERNAME }} --admin_email=${{ env.WP_ADMIN_EMAIL }}
