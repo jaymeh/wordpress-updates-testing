@@ -60,6 +60,7 @@ update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
 CURRENT_VERSION=$(php wp-cli.phar core version)
 NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
 php wp-cli.phar core update
+rm wp-cli.phar
 git add .
 git commit -m "Update WordPress Core from $CURRENT_VERSION to $NEW_VERSION."
 
