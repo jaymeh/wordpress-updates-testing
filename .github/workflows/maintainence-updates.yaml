@@ -67,9 +67,11 @@ jobs:
       - name: Set Date
         id: vars
         run: |
-          branch_name=maintenance/$(date +"%d-%b-%y")
+          full_date=date +"%D"
+          branch_date=date +"%d-%b-%y"
+          branch_name=maintenance/${branch_date,,}
           echo branch_name=$branch_name >> $GITHUB_OUTPUT
-          echo date=$(date +\"%D") >> $GITHUB_OUTPUT
+          echo date=$full_date >> $GITHUB_OUTPUT
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
