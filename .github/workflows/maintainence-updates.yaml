@@ -64,9 +64,16 @@ jobs:
           git config --global user.name "Creode Developers"
           ./.github/scripts/update.sh
 
+      - name: Set Date
+        id: vars
+        run: |
+          branch_name=maintenance/$(date +\"%d-%b-%y\")
+          echo branch_name=$branch_name >> $GITHUB_OUTPUT
+          echo date=$(date +\"%D") >> $GITHUB_OUTPUT
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-          branch: maintenance/${date +"%D"}
+          branch: ${{ steps.vars.outputs.branch_name }}
           commit-message: Update Translations and Languages for plugins, themes and core.
-          title: Maintanence updates for ${date +"%D"}
+          title: Maintanence updates for ${{ steps.vars.outputs.date }}
