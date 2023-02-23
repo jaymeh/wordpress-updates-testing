@@ -27,6 +27,14 @@ jobs:
       WP_ADMIN_USERNAME: admin
       WP_ADMIN_EMAIL: admin@example.com
 
+      PLUGIN_DIRECTORY: wp-content/plugins
+      THEME_DIRECTORY: wp-content/themes
+
+      # Detemines whether ACF pro should be updated.
+      UPDATE_ACF_PRO: true
+      UPDATE_LANGUAGES: true
+      ACF_PRO_KEY: ${{ secrets.ACF_PRO_KEY }}
+
     steps:
     - name: Set up MySQL
       run: |
@@ -51,7 +59,7 @@ jobs:
     - name: Setup site
       run: php wp-cli.phar core install --url=${{ env.WP_SITE_URL}} --title="${{env.WP_SITE_TITLE}}" --admin_user=${{ env.WP_ADMIN_USERNAME }} --admin_email=${{ env.WP_ADMIN_EMAIL }}
 
-    - name: Run plugin updates
+    - name: Run updates
       run: |
         git config --global user.email "dev@creode.co.uk"
         git config --global user.name "Creode Developers"

@@ -17,22 +17,55 @@ update_extensions() {
     done
 }
 
+# Update Languages $1 = TYPE (plugin or theme.)
+update_languages() {
+    php wp-cli.phar language $1 update --all
+}
+
 # Update Plugins.
 UPDATE_COMMAND=$(php wp-cli.phar plugin update --all --format=json)
 TYPE='plugin'
-DIRECTORY=wp-content/plugins
+DIRECTORY=$PLUGIN_DIRECTORY
 TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
 update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
+
+# Update ACF Pro.
+if [ $UPDATE_ACF_PRO == true ]; then
+    # Download Zip File
+    acf_zip_file="$(php wp-cli.phar plugin path)/acf-pro.zip"
+    $(wget -O ${acf_zip_file} "https://connect.advancedcustomfields.com/v2/plugins/download?p=pro&k=${ACF_PRO_KEY}")
+
+    # Extract Zip file.
+    current_folder="$(pwd)"
+    cd $(php wp-cli.phar plugin path)
+    unzip -o ${acf_zip_file}
+    rm ${acf_zip_file}
+    cd ${current_folder}
+
+    # Add all changes to git.
+    git add $(php wp-cli.phar plugin path)
+    git commit -m "Updated ACF Pro."
+fi
 
 # Update Themes.
 UPDATE_COMMAND=$(php wp-cli.phar theme update --all --format=json)
 TYPE='theme'
-DIRECTORY=wp-content/themes
+DIRECTORY=$THEME_DIRECTORY
 TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
 update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
 
-# TODO: Update Core
+# Update Core
+CURRENT_VERSION=$(php wp-cli.phar core version)
+NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
+php wp-cli.phar core update
+git add .
+git commit -m "Update WordPress Core from $CURRENT_VERSION to $NEW_VERSION."
 
-# TODO: Update Languages/Translations for all types.
+# Update Languages/Translations for all types.
+php wp-cli.phar language core update
+if [ $UPDATE_LANGUAGES == true ]; then
+    update_languages "plugin"
+    update_languages "theme"
+fi
