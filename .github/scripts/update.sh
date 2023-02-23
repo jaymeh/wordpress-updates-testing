@@ -5,8 +5,10 @@ file=update-report.md
 touch ${file}
 
 echo '' >> .gitignore
-echo '# Ignore WP CLI file.' >> .gitignore
+echo '# Ignore Updates Versions file.' >> .gitignore
 echo $file >> .gitignore
+git add .gitignore
+git commit -m 'Prevent version output from being added to repository.'
 
 # Update Items $1 = TOTAL_ROWS, $2 = COMMAND, $3 = TYPE (plugin, theme, language, core), $4 = DIRECTORY.
 update_extensions() {
