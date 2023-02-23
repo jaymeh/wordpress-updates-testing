@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Create update file.
+file=update-report.md
+touch ${file}
+
+echo '' >> .gitignore
+echo '# Ignore WP CLI file.' >> .gitignore
+echo $file >> .gitignore
+
 # Update Items $1 = TOTAL_ROWS, $2 = COMMAND, $3 = TYPE (plugin, theme, language, core), $4 = DIRECTORY.
 update_extensions() {
     for (( c=0; c<=$1 - 1; c++ ))
@@ -11,6 +19,7 @@ update_extensions() {
         PLUGIN_PATH="$4/$NAME"
 
         if [ $STATUS == 'Updated' ]; then
+            echo - Updated $3 ${NAME^} from $VERSION to $UPDATED_VERSION. >> ${file}
             git add $PLUGIN_PATH/*
             git commit -m "Updated $3 ${NAME^} from $VERSION to $UPDATED_VERSION."
         fi
@@ -35,6 +44,8 @@ TYPE='plugin'
 DIRECTORY=$PLUGIN_DIRECTORY
 TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
+echo "## Plugins" >> ${file}
+
 update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
 
 # Update ACF Pro.
@@ -53,7 +64,12 @@ if [ $UPDATE_ACF_PRO == true ]; then
     # Add all changes to git.
     git add $(php wp-cli.phar plugin path) || true
     git commit -m "Updated ACF Pro." || true
+
+    echo "- ACF Pro" >> ${file}
 fi
+
+echo "" >> ${file}
+echo "## Themes" >> ${file}
 
 # Update Themes.
 UPDATE_COMMAND=$(php wp-cli.phar theme update --all --format=json)
@@ -63,12 +79,18 @@ TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
 update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
 
+echo "" >> ${file}
+echo "## Core" >> ${file}
+
 # Update Core
 CURRENT_VERSION=$(php wp-cli.phar core version)
 NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
 php wp-cli.phar core update
 git add . || true
 git commit -m "Update WordPress Core from $CURRENT_VERSION to $NEW_VERSION." || true
+
+echo "" >> ${file}
+echo "## Translations" >> ${file}
 
 # Update Languages/Translations for all types.
 php wp-cli.phar language core update
