@@ -67,7 +67,7 @@ jobs:
       - name: Set Date
         id: vars
         run: |
-          full_date=$(date +"%d")
+          full_date=$(date +"%d-%m-%Y")
           branch_date=$(date +"%d-%b-%y")
           branch_name=maintenance/${branch_date,,}
           echo branch_name=$branch_name >> $GITHUB_OUTPUT

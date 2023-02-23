@@ -75,4 +75,6 @@ php wp-cli.phar language core update
 if [ $UPDATE_LANGUAGES == true ]; then
     update_languages "plugin"
     update_languages "theme"
+    git add $LANGUAGE_DIRECTORY || true
+    git commit -m "Update Translations and Languages for plugins, themes and core." || true
 fi
