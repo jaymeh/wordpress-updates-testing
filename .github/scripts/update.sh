@@ -22,6 +22,13 @@ update_languages() {
     php wp-cli.phar language $1 update --all
 }
 
+# Prevent committing the WP CLI File.
+echo '' >> .gitignore
+echo '# Ignore WP CLI file.' >> .gitignore
+echo 'wp-cli.phar' >> .gitignore
+git add .gitignore
+git commit -m 'Prevent wp-cli.phar script from being added to repository.'
+
 # Update Plugins.
 UPDATE_COMMAND=$(php wp-cli.phar plugin update --all --format=json)
 TYPE='plugin'
@@ -60,7 +67,6 @@ update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
 CURRENT_VERSION=$(php wp-cli.phar core version)
 NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
 php wp-cli.phar core update
-rm wp-cli.phar
 git add .
 git commit -m "Update WordPress Core from $CURRENT_VERSION to $NEW_VERSION."
 
@@ -69,4 +75,6 @@ php wp-cli.phar language core update
 if [ $UPDATE_LANGUAGES == true ]; then
     update_languages "plugin"
     update_languages "theme"
+    git add $LANGUAGE_DIRECTORY
+    git commit -m "Update Translations and Languages for plugins, themes and core."
 fi

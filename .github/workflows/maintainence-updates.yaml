@@ -16,6 +16,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
+      ACF_PRO_KEY: ${{ secrets.ACF_PRO_KEY }}
+
       DB_DATABASE: wordpress
       DB_USER: root
       DB_PASSWORD: root
@@ -27,11 +29,11 @@ jobs:
 
       PLUGIN_DIRECTORY: wp-content/plugins
       THEME_DIRECTORY: wp-content/themes
+      LANGUAGE_DIRECTORY: wp-content/languages
 
       # Detemines whether ACF pro should be updated.
       UPDATE_ACF_PRO: true
       UPDATE_LANGUAGES: true
-      ACF_PRO_KEY: ${{ secrets.ACF_PRO_KEY }}
     steps:
       - name: Set up MySQL
         run: |
