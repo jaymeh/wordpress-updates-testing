@@ -68,3 +68,5 @@ jobs:
         uses: peter-evans/create-pull-request@v4
         with:
           branch: maintenance/${date +"%D"}
+          commit-message: Update Translations and Languages for plugins, themes and core.
+          title: Maintanence updates for ${date +"%D"}

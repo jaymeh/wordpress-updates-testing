@@ -51,8 +51,8 @@ if [ $UPDATE_ACF_PRO == true ]; then
     cd ${current_folder}
 
     # Add all changes to git.
-    git add $(php wp-cli.phar plugin path)
-    git commit -m "Updated ACF Pro."
+    git add $(php wp-cli.phar plugin path) || true
+    git commit -m "Updated ACF Pro." || true
 fi
 
 # Update Themes.
@@ -67,14 +67,12 @@ update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
 CURRENT_VERSION=$(php wp-cli.phar core version)
 NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
 php wp-cli.phar core update
-git add .
-git commit -m "Update WordPress Core from $CURRENT_VERSION to $NEW_VERSION."
+git add . || true
+git commit -m "Update WordPress Core from $CURRENT_VERSION to $NEW_VERSION." || true
 
 # Update Languages/Translations for all types.
 php wp-cli.phar language core update
 if [ $UPDATE_LANGUAGES == true ]; then
     update_languages "plugin"
     update_languages "theme"
-    git add $LANGUAGE_DIRECTORY
-    git commit -m "Update Translations and Languages for plugins, themes and core."
 fi
