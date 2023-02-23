@@ -34,3 +34,6 @@ wp-config-ddev.php
 
 # Ignore Updates Versions file.
 update-report.md
+
+# Ignore WP CLI file.
+wp-cli.phar
