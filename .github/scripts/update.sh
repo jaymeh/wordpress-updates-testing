@@ -46,7 +46,7 @@ TYPE='plugin'
 DIRECTORY=$PLUGIN_DIRECTORY
 TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
-if [ $TOTAL_ROWS -gt 0]; then
+if [ $TOTAL_ROWS -gt 0 ]; then
     echo "## Plugins"$'\n' >> ${file}
     update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
     echo "" >> ${file}
@@ -80,7 +80,7 @@ TYPE='theme'
 DIRECTORY=$THEME_DIRECTORY
 TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
-if [ $TOTAL_ROWS -gt 0]; then
+if [ $TOTAL_ROWS -gt 0 ]; then
     echo "## Themes" >> ${file}
     update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
     echo "$'\n'"$'\n' >> ${file}
