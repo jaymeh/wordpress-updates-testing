@@ -72,11 +72,12 @@ jobs:
           branch_name=maintenance/${branch_date,,}
           echo branch_name=$branch_name >> $GITHUB_OUTPUT
           echo date=$full_date >> $GITHUB_OUTPUT
-          update_report="$(cat update-report.md)"
-          update_report="${update_report//'%'/'%25'}"
-          update_report="${update_report//$'\n'/'%0A'}"
-          update_report="${update_report//$'\r'/'%0D'}"
-          echo "::set-output name=update_report::$update_report"
+
+      - name: Generate Update Report
+        uses: mkungla/actions-set-text-output@v1
+        id: update-report
+        with:
+          text: $(cat update-report.md)
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
@@ -84,4 +85,4 @@ jobs:
           branch: ${{ steps.vars.outputs.branch_name }}
           commit-message: Update Translations and Languages for plugins, themes and core.
           title: Maintanence updates for ${{ steps.vars.outputs.date }}
-          body: "${{ steps.vars.outputs.update_report }}"
+          body: "${{ steps.update-report.outputs.value }}"
