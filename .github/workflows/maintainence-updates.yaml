@@ -75,8 +75,6 @@ jobs:
           update_report=$(cat update-report.md)
 
           echo "$update_report" >> $GITHUB_OUTPUT
-          echo "$update_report"
-          echo cat update-report.md
           rm update-report.md
 
 
