@@ -72,9 +72,7 @@ jobs:
           branch_name=maintenance/${branch_date,,}
           echo branch_name=$branch_name >> $GITHUB_OUTPUT
           echo date=$full_date >> $GITHUB_OUTPUT
-          update_report=$(cat update-report.md)
-
-          echo -en ::set-output name=update_report::$update_report
+          echo -en update_report=$(cat update-report.md)  >> $GITHUB_OUTPUT
 
           cat update-report.md
           rm update-report.md
