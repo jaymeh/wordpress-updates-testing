@@ -74,7 +74,7 @@ jobs:
           echo date=$full_date >> $GITHUB_OUTPUT
           update_report=$(cat update-report.md)
 
-          echo "$update_report" >> $GITHUB_OUTPUT
+          echo update_report="$update_report" >> $GITHUB_OUTPUT
           rm update-report.md
 
 
