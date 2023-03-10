@@ -86,4 +86,4 @@ jobs:
           branch: ${{ steps.vars.outputs.branch_name }}
           commit-message: Update Translations and Languages for plugins, themes and core.
           title: Maintanence updates for ${{ steps.vars.outputs.date }}
-          body: ${{ steps.update-report.outputs.update-report }}
+          body: ${{ steps.update-report.outputs.report }}
