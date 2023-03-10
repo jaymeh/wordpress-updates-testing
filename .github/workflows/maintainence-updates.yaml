@@ -72,7 +72,7 @@ jobs:
           branch_name=maintenance/${branch_date,,}
           echo branch_name=$branch_name >> $GITHUB_OUTPUT
           echo date=$full_date >> $GITHUB_OUTPUT
-          echo -en update_report=$(cat update-report.md)  >> $GITHUB_OUTPUT
+          echo -en update_report="$(cat update-report.md)" >> $GITHUB_OUTPUT
 
 
       - name: Create Pull Request
@@ -81,4 +81,4 @@ jobs:
           branch: ${{ steps.vars.outputs.branch_name }}
           commit-message: Update Translations and Languages for plugins, themes and core.
           title: Maintanence updates for ${{ steps.vars.outputs.date }}
-          body: $(cat update-report.md)
+          body: 

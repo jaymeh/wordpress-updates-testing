@@ -86,7 +86,7 @@ fi
 # Update Core
 CURRENT_VERSION=$(php wp-cli.phar core version)
 NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
-if ["$CURRENT_VERSION" -ne "$NEW_VERSION"]; then
+if [$CURRENT_VERSION -ne $NEW_VERSION]; then
     echo "## Core" >> ${file}
     php wp-cli.phar core update
     git add . || true
