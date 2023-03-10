@@ -75,7 +75,7 @@ jobs:
 
       - name: Generate Update Report
         id: update-report
-        run:
+        run: |
           echo 'report<<EOF' >> $GITHUB_OUTPUT
           cat update-report.md >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
