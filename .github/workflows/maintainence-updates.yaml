@@ -3,10 +3,8 @@ name: Maintenance Updates
 on:
   workflow_dispatch:
 
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  schedule:
+    - cron:  '50 16 10 * *' # 10th of month at 16:50.
 
 permissions:
   contents: write
