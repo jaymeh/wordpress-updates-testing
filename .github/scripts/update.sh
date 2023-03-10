@@ -49,9 +49,7 @@ TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
 if [ $TOTAL_ROWS -gt 0 ]; then
     echo "## Plugins" >> ${file}
-    # echo $'\n\n' >> ${file}
     update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
-    echo "" >> ${file}
 fi
 
 # Update ACF Pro.
@@ -72,7 +70,6 @@ if [ $UPDATE_ACF_PRO == true ]; then
     git commit -m "Updated ACF Pro." || true
 
     echo "- ACF Pro" >> ${file}
-    # echo $'\n' >> ${file}
 fi
 
 # Update Themes.
@@ -82,11 +79,8 @@ DIRECTORY=$THEME_DIRECTORY
 TOTAL_ROWS=$(echo $UPDATE_COMMAND | jq length)
 
 if [ $TOTAL_ROWS -gt 0 ]; then
-    # echo $'\n' >> ${file}
     echo "## Themes" >> ${file}
-    # echo $'\n' >> ${file}
     update_extensions "$TOTAL_ROWS" "$UPDATE_COMMAND" "$TYPE" "$DIRECTORY"
-    # echo $'\n' >> ${file}
 fi
 
 # Update Core
@@ -94,13 +88,11 @@ CURRENT_VERSION=$(php wp-cli.phar core version)
 NEW_VERSION=$(php wp-cli.phar core check-update --format=json | jq -r ".[0].version")
 if ["$CURRENT_VERSION" -ne "$NEW_VERSION"]; then
     echo "## Core" >> ${file}
-    # echo $'\n' >> ${file}
     php wp-cli.phar core update
     git add . || true
     git commit -m "Updates WordPress Core from $CURRENT_VERSION to $NEW_VERSION." || true
 
     echo "- Updated WordPress Core from $CURRENT_VERSION to $NEW_VERSION." >> ${file}
-    # echo $'\n' >> ${file}
 fi
 
 # Update Languages/Translations for all types.
@@ -112,5 +104,4 @@ if [ $UPDATE_LANGUAGES == true ]; then
     git add $LANGUAGE_DIRECTORY || true
     git commit -m "Updates Translations and Languages for plugins, themes and core." || true
     echo "- Updates Translations and Languages for plugins, themes and core." >> ${file}
-    # echo $'\n' >> ${file}
 fi
