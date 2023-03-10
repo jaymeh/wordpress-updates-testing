@@ -72,7 +72,11 @@ jobs:
           branch_name=maintenance/${branch_date,,}
           echo branch_name=$branch_name >> $GITHUB_OUTPUT
           echo date=$full_date >> $GITHUB_OUTPUT
-          echo -e update_report=$(cat update-report.md) >> $GITHUB_OUTPUT
+          update_report=$(cat update-report.md)
+          update_report="${update_report//'%'/'%25'}"
+          update_report="${update_report//$'\n'/'%0A'}"
+          update_report="${update_report//$'\r'/'%0D'}" 
+          echo "$update_report" >> $GITHUB_OUTPUT
           rm update-report.md
 
       - name: Create Pull Request
