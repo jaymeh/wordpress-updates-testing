@@ -77,7 +77,11 @@ jobs:
         uses: mkungla/actions-set-text-output@v1
         id: update-report
         with:
-          text: "$(cat update-report.md)"
+          text: $(cat update-report.md)
+
+      - name: Cleanup
+        run:
+          rm update-report.md
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
