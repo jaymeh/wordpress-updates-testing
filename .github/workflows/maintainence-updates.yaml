@@ -76,8 +76,7 @@ jobs:
           update_report="${update_report//'%'/'%25'}"
           update_report="${update_report//$'\n'/'%0A'}"
           update_report="${update_report//$'\r'/'%0D'}"
-          echo -en "update_report=$update_report" >> $GITHUB_OUTPUT
-          echo -en "$update_report"
+          echo "::set-output name=update_report::$update_report"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
