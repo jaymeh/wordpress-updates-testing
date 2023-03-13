@@ -85,3 +85,4 @@ jobs:
           commit-message: Update Translations and Languages for plugins, themes and core.
           title: Maintanence updates for ${{ steps.vars.outputs.date }}
           body: ${{ steps.update-report.outputs.report }}
+          assignees: creode-dev
