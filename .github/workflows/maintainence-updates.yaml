@@ -19,6 +19,7 @@ jobs:
       DB_DATABASE: wordpress
       DB_USER: root
       DB_PASSWORD: root
+      DB_HOST: 127.0.0.1
 
       WP_SITE_URL: wordpress-github-actions-testing.ddev.site
       WP_SITE_TITLE: "Devops Site"
@@ -48,11 +49,13 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install WP CLI
-        run: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        run: |
+          curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          php wp-cli.phar --info
 
       - name: Setup WP Config FIle
         run: |
-          php wp-cli.phar config create --dbname=${{env.DB_DATABASE}} --dbuser=${{env.DB_USER}} --dbpass=${{env.DB_PASSWORD}}
+          php wp-cli.phar config create --dbname=${{env.DB_DATABASE}} --dbuser=${{env.DB_USER}} --dbpass=${{env.DB_PASSWORD}} --dbhost=${{env.DB_HOST}}
           cat wp-config.php
 
       - name: Setup site
