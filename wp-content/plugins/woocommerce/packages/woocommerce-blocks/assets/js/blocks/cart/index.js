@@ -35,12 +35,12 @@ const settings = {
 		align: [ 'wide' ],
 		html: false,
 		multiple: false,
-		__experimentalExposeControlsToChildren: true,
 	},
 	example: {
 		attributes: {
 			isPreview: true,
 		},
+		viewportWidth: 800,
 	},
 	attributes: blockAttributes,
 	edit: Edit,
