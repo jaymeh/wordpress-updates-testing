@@ -4,8 +4,10 @@
 import { renderParentBlock } from '@woocommerce/atomic-utils';
 import Drawer from '@woocommerce/base-components/drawer';
 import { useStoreCart } from '@woocommerce/base-context/hooks';
-import { useTypographyProps } from '@woocommerce/base-hooks';
-import { translateJQueryEventToNative } from '@woocommerce/base-utils';
+import {
+	getValidBlockAttributes,
+	translateJQueryEventToNative,
+} from '@woocommerce/base-utils';
 import { getRegisteredBlockComponents } from '@woocommerce/blocks-registry';
 import {
 	formatPrice,
@@ -35,7 +37,10 @@ import classnames from 'classnames';
 import QuantityBadge from './quantity-badge';
 import { MiniCartContentsBlock } from './mini-cart-contents/block';
 import './style.scss';
-import { blockName } from './mini-cart-contents/attributes';
+import {
+	blockName,
+	attributes as miniCartContentsAttributes,
+} from './mini-cart-contents/attributes';
 
 interface Props {
 	isInitiallyOpen?: boolean;
@@ -106,6 +111,17 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 				renderParentBlock( {
 					Block: MiniCartContentsBlock,
 					blockName,
+					getProps: ( el: Element ) => {
+						return {
+							attributes: getValidBlockAttributes(
+								miniCartContentsAttributes,
+								/* eslint-disable @typescript-eslint/no-explicit-any */
+								( el instanceof HTMLElement
+									? el.dataset
+									: {} ) as any
+							),
+						};
+					},
 					selector: '.wp-block-woocommerce-mini-cart-contents',
 					blockMap: getRegisteredBlockComponents( blockName ),
 				} );
@@ -205,8 +221,6 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 		color: style?.color?.text,
 	};
 
-	const typographyProps = useTypographyProps( attributes );
-
 	return (
 		<>
 			<button
@@ -221,10 +235,7 @@ const MiniCartBlock = ( attributes: Props ): JSX.Element => {
 				aria-label={ ariaLabel }
 			>
 				{ ! hasHiddenPrice && (
-					<span
-						className="wc-block-mini-cart__amount"
-						style={ typographyProps.style }
-					>
+					<span className="wc-block-mini-cart__amount">
 						{ formatPrice(
 							subTotal,
 							getCurrencyFromPriceResponse( cartTotals )

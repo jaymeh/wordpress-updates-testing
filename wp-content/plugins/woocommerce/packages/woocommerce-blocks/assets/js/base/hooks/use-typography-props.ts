@@ -1,30 +1,50 @@
-/* eslint-disable @wordpress/no-unsafe-wp-apis */
 /**
  * External dependencies
  */
-import { isObject } from '@woocommerce/types';
+import { isObject, isString } from '@woocommerce/types';
 import { parseStyle } from '@woocommerce/base-utils';
+
+type WithClass = {
+	className: string;
+};
 
 type WithStyle = {
 	style: Record< string, unknown >;
 };
 
-export const useTypographyProps = ( attributes: unknown ): WithStyle => {
-	const attributesObject = isObject( attributes ) ? attributes : {};
-	const style = parseStyle( attributesObject.style );
-	const typography = isObject( style.typography )
-		? ( style.typography as Record< string, unknown > )
+type blockAttributes = {
+	style?: Record< string, unknown > | string | undefined;
+	fontSize?: string | undefined;
+	fontFamily?: string | undefined;
+};
+
+export const useTypographyProps = (
+	props: blockAttributes
+): WithStyle & WithClass => {
+	const styleObject = parseStyle( props.style );
+	const typography = isObject( styleObject.typography )
+		? ( styleObject.typography as Record< string, string > )
 		: {};
 
+	const classNameFallback = isString( typography.fontFamily )
+		? typography.fontFamily
+		: '';
+	const className = props.fontFamily
+		? `has-${ props.fontFamily }-font-family`
+		: classNameFallback;
+
 	return {
+		className,
 		style: {
-			fontSize: attributesObject.fontSize
-				? `var(--wp--preset--font-size--${ attributesObject.fontSize })`
+			fontSize: props.fontSize
+				? `var(--wp--preset--font-size--${ props.fontSize })`
 				: typography.fontSize,
-			lineHeight: typography.lineHeight,
+			fontStyle: typography.fontStyle,
 			fontWeight: typography.fontWeight,
+			letterSpacing: typography.letterSpacing,
+			lineHeight: typography.lineHeight,
+			textDecoration: typography.textDecoration,
 			textTransform: typography.textTransform,
-			fontFamily: attributesObject.fontFamily,
 		},
 	};
 };

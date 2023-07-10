@@ -3,9 +3,9 @@
  */
 import { useState, useEffect, useMemo } from '@wordpress/element';
 import { useDebounce } from 'use-debounce';
-import { sortBy } from 'lodash';
+import { isEmpty, objectHasProp } from '@woocommerce/types';
+import { sort } from 'fast-sort';
 import { useShallowEqual } from '@woocommerce/base-hooks';
-import { objectHasProp } from '@woocommerce/types';
 
 /**
  * Internal dependencies
@@ -22,7 +22,7 @@ const buildCollectionDataQuery = (
 	if (
 		Array.isArray( collectionDataQueryState.calculate_attribute_counts )
 	) {
-		query.calculate_attribute_counts = sortBy(
+		query.calculate_attribute_counts = sort(
 			collectionDataQueryState.calculate_attribute_counts.map(
 				( { taxonomy, queryType } ) => {
 					return {
@@ -30,9 +30,8 @@ const buildCollectionDataQuery = (
 						query_type: queryType,
 					};
 				}
-			),
-			[ 'taxonomy', 'query_type' ]
-		);
+			)
+		).asc( [ 'taxonomy', 'query_type' ] );
 	}
 
 	return query;
@@ -45,14 +44,20 @@ interface UseCollectionDataProps {
 	};
 	queryPrices?: boolean;
 	queryStock?: boolean;
+	queryRating?: boolean;
 	queryState: Record< string, unknown >;
+	productIds?: number[];
+	isEditor?: boolean;
 }
 
 export const useCollectionData = ( {
 	queryAttribute,
 	queryPrices,
 	queryStock,
+	queryRating,
 	queryState,
+	productIds,
+	isEditor = false,
 }: UseCollectionDataProps ) => {
 	let context = useQueryStateContext();
 	context = `${ context }-collection-data`;
@@ -66,10 +71,13 @@ export const useCollectionData = ( {
 		calculateStockStatusQueryState,
 		setCalculateStockStatusQueryState,
 	] = useQueryStateByKey( 'calculate_stock_status_counts', null, context );
+	const [ calculateRatingQueryState, setCalculateRatingQueryState ] =
+		useQueryStateByKey( 'calculate_rating_counts', null, context );
 
 	const currentQueryAttribute = useShallowEqual( queryAttribute || {} );
 	const currentQueryPrices = useShallowEqual( queryPrices );
 	const currentQueryStock = useShallowEqual( queryStock );
+	const currentQueryRating = useShallowEqual( queryRating );
 
 	useEffect( () => {
 		if (
@@ -124,8 +132,21 @@ export const useCollectionData = ( {
 		calculateStockStatusQueryState,
 	] );
 
+	useEffect( () => {
+		if (
+			calculateRatingQueryState !== currentQueryRating &&
+			currentQueryRating !== undefined
+		) {
+			setCalculateRatingQueryState( currentQueryRating );
+		}
+	}, [
+		currentQueryRating,
+		setCalculateRatingQueryState,
+		calculateRatingQueryState,
+	] );
+
 	// Defer the select query so all collection-data query vars can be gathered.
-	const [ shouldSelect, setShouldSelect ] = useState( false );
+	const [ shouldSelect, setShouldSelect ] = useState( isEditor );
 	const [ debouncedShouldSelect ] = useDebounce( shouldSelect, 200 );
 
 	if ( ! shouldSelect ) {
@@ -145,6 +166,7 @@ export const useCollectionData = ( {
 			per_page: undefined,
 			orderby: undefined,
 			order: undefined,
+			...( ! isEmpty( productIds ) && { include: productIds } ),
 			...collectionDataQueryVars,
 		},
 		shouldSelect: debouncedShouldSelect,
