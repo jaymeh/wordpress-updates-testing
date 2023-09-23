@@ -34,3 +34,6 @@ wp-config-ddev.php
 
 # Ignore Updates Versions file.
 update-report.md
+
+# Prevent wp-cli.phar script from being added to repository.
+wp-cli.phar
